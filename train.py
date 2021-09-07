@@ -21,7 +21,6 @@ class TrainTransformer:
                  warmup,
                  batch_size,
                  n_layers,
-                 split_test,
                  retrain,
                  bleu,
                  debug):
@@ -38,7 +37,6 @@ class TrainTransformer:
         self.d_model = d_model
         self.n_layers = n_layers
         self.retrain = retrain
-        self.split_test = split_test
         self.bleu = bleu
         self.debug = debug
 
@@ -148,14 +146,13 @@ class TrainTransformer:
         train_ds = train_ds.shuffle(42)
 
         train_len = len(train_x)
-        split_test = int(train_len * self.split_test)
         self.N_batch = train_len // self.batch_size
 
         for epoch in range(self.epochs):
-            bleu_score = 0
+            print("===========================================================")
+
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
-            print("===========================================================")
             for batch, (inp, tar) in enumerate(train_ds):
                 self.train_step(inp, tar)
 
@@ -192,7 +189,7 @@ if __name__ == '__main__':
     parser.add_argument("--inp-lang", required=True, type=str)
     parser.add_argument("--tar-lang", required=True, type=str)
     parser.add_argument("--batch-size", default=128, type=int)
-    parser.add_argument("--epochs", default=10, type=int)
+    parser.add_argument("--epochs", default=1000, type=int)
     parser.add_argument("--n_layers", default=1, type=int)
     parser.add_argument("--d-model", default=256, type=int)
     parser.add_argument("--header-size", default=8, type=int)
@@ -200,7 +197,6 @@ if __name__ == '__main__':
     parser.add_argument("--min-sentence", default=5, type=int)
     parser.add_argument("--max-sentence", default=10, type=int)
     parser.add_argument("--warmup-steps", default=4000, type=int)
-    parser.add_argument("--split-test", default=0.001, type=float)
     parser.add_argument("--retrain", default=False, type=bool)
     parser.add_argument("--bleu", default=False, type=bool)
     parser.add_argument("--debug", default=False, type=bool)
@@ -233,7 +229,6 @@ if __name__ == '__main__':
                      max_seq_len=args.max_sentence,
                      warmup=args.warmup_steps,
                      n_layers=args.n_layers,
-                     split_test=args.split_test,
                      retrain=args.retrain,
                      bleu=args.bleu,
                      debug=args.debug).fit()
