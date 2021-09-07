@@ -103,6 +103,7 @@ class TrainTransformer:
             target_sentence = " ".join(self.tar_builder.sequences_to_texts([target.numpy()]))
 
             # Encode input
+            input_sentence = " ".join(self.inp_builder.sequences_to_texts([encode_input.numpy()]))
             encode_input = tf.expand_dims(encode_input, axis=0)
 
             # Decode input
@@ -123,7 +124,7 @@ class TrainTransformer:
             score += self.bleu_score(pred_sentence, target_sentence)
 
             if i < 5:
-                print("Input   : ", " ".join(self.tar_builder.sequences_to_texts([encode_input.numpy()])))
+                print("Input   : ", input_sentence)
                 print("Predict : ", pred_sentence)
                 print("Target  : ", target_sentence)
                 print("-----------------------------------------------------------")
@@ -196,7 +197,7 @@ if __name__ == '__main__':
     parser.add_argument("--d-model", default=256, type=int)
     parser.add_argument("--header-size", default=8, type=int)
     parser.add_argument("--diff-deep", default=512, type=int)
-    parser.add_argument("--min-sentence", default=4, type=int)
+    parser.add_argument("--min-sentence", default=5, type=int)
     parser.add_argument("--max-sentence", default=10, type=int)
     parser.add_argument("--warmup-steps", default=4000, type=int)
     parser.add_argument("--split-test", default=0.001, type=float)
@@ -236,4 +237,4 @@ if __name__ == '__main__':
                      retrain=args.retrain,
                      bleu=args.bleu,
                      debug=args.debug).fit()
-    # python train.py --inp-lang="dataset/seq2seq/train.en.txt" --tar-lang="dataset/seq2seq/train.vi.txt"
+    # python train.py --inp-lang="dataset/seq2seq/train.en.txt" --tar-lang="dataset/seq2seq/train.vi.txt" --bleu=True
