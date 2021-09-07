@@ -3,8 +3,6 @@
 Implementation of [Attention is all you need](https://arxiv.org/pdf/1706.03762.pdf). This library is part of our
 project: Building an AI library with ProtonX.
 
-In this paper, the authors used `Transformer` model, it's `Atteion Mechanism`
-
 ## Architecture Image
 
 <p align="center">
