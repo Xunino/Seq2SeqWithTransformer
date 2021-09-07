@@ -98,7 +98,7 @@ class TrainTransformer:
 
     def evaluation(self, inp, tar):
         score = 0
-        for encode_input, target in zip(inp, tar):
+        for i, encode_input, target in enumerate(zip(inp, tar)):
             # Target text
             target_sentence = " ".join(self.tar_builder.sequences_to_texts([target.numpy()]))
 
@@ -121,6 +121,12 @@ class TrainTransformer:
                     break
             pred_sentence = " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
             score += self.bleu_score(pred_sentence, target_sentence)
+
+            if i < 5:
+                print("Input   : ", " ".join(self.tar_builder.sequences_to_texts([encode_input.numpy()])))
+                print("Predict : ", pred_sentence)
+                print("Target  : ", target_sentence)
+
         return score
 
     def fit(self):
