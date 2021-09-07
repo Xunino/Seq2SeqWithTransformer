@@ -126,6 +126,7 @@ class TrainTransformer:
                 print("Input   : ", " ".join(self.tar_builder.sequences_to_texts([encode_input.numpy()])))
                 print("Predict : ", pred_sentence)
                 print("Target  : ", target_sentence)
+                print("-----------------------------------------------------------")
 
         return score
 
