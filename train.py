@@ -98,7 +98,7 @@ class TrainTransformer:
 
     def evaluation(self, inp, tar):
         score = 0
-        for i, encode_input, target in enumerate(inp, tar):
+        for i, (encode_input, target) in enumerate(zip(inp, tar)):
             # Target text
             target_sentence = " ".join(self.tar_builder.sequences_to_texts([target.numpy()]))
 
