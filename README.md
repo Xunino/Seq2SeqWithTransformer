@@ -6,7 +6,7 @@ project: Building an AI library with ProtonX.
 ## Architecture Image
 
 <p align="center">
-    <img src="F:\8. BERTSum\BERTSum\assets\Transformer.png">
+    <img src="https://github.com/Xunino/Seq2SeqWithTransformer/blob/main/assets/Transformer.png">
 </p>
 
 Authors:
