@@ -10,17 +10,16 @@ from argparse import ArgumentParser
 
 class Translate(TrainTransformer):
     def __init__(self, inp_lang_path, tar_lang_path, min_seq_len, max_seq_len, epochs, header_size,
-                 diff_deep, d_model, warmup, batch_size, n_layers, split_test, retrain, bleu,
+                 diff_deep, d_model, warmup, batch_size, n_layers, retrain, bleu,
                  debug):
         super(Translate, self).__init__(inp_lang_path, tar_lang_path, min_seq_len, max_seq_len, epochs, header_size,
-                                        diff_deep, d_model, warmup, batch_size, n_layers, split_test, retrain, bleu,
-                                        debug)
+                                        diff_deep, d_model, warmup, batch_size, n_layers, retrain, bleu, debug)
 
-    def __call__(self, text):
-        if os.path.exists(self.saved_checkpoint):
+        if os.listdir(self.saved_checkpoint) != []:
             self.ckpt_manager.restore_or_initialize()
             print("[INFO] Restore models")
 
+    def __call__(self, text):
         text = self.loader.remove_punctuation(text)
         vector = self.inp_builder.texts_to_sequences(text.split())
         vector = tf.reshape(vector, shape=(1, -1))
@@ -63,7 +62,6 @@ if __name__ == '__main__':
     parser.add_argument("--min-sentence", default=4, type=int)
     parser.add_argument("--max-sentence", default=10, type=int)
     parser.add_argument("--warmup-steps", default=4000, type=int)
-    parser.add_argument("--split-test", default=0.001, type=float)
     parser.add_argument("--retrain", default=False, type=bool)
     parser.add_argument("--bleu", default=False, type=bool)
     parser.add_argument("--debug", default=False, type=bool)
@@ -96,10 +94,10 @@ if __name__ == '__main__':
                           max_seq_len=args.max_sentence,
                           warmup=args.warmup_steps,
                           n_layers=args.n_layers,
-                          split_test=args.split_test,
                           retrain=args.retrain,
                           bleu=args.bleu,
                           debug=args.debug)
 
-    print(translate("And it enters now another story ."))
+    text = "Enter the sentence to translate:"
+    print(translate(text))
     # python translation.py --inp-lang="dataset/seq2seq/train.en.txt" --tar-lang="dataset/seq2seq/train.vi.txt"
