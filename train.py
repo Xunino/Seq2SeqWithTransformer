@@ -1,12 +1,11 @@
-from argparse import ArgumentParser
-
+import os
+import numpy as np
 import tensorflow as tf
-from keras_preprocessing.sequence import pad_sequences
-from tqdm import tqdm
-from models.model import Transformer
-from metrics import BleuScore, CustomSchedule, MaskedSoftmaxCELoss
 from loader import DatasetLoader
-from models.layers.Masking import create_masks
+from argparse import ArgumentParser
+from models.model import Transformer
+from keras_preprocessing.sequence import pad_sequences
+from metrics import BleuScore, CustomSchedule, MaskedSoftmaxCELoss, accuracy_function
 
 
 class TrainTransformer:
@@ -50,11 +49,11 @@ class TrainTransformer:
         self.optimizer = tf.keras.optimizers.Adam(learning_scheduler, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
         # Initialize dataset
-        loader = DatasetLoader(self.inp_lang_path,
-                               self.tar_lang_path,
-                               self.min_seq_len,
-                               self.max_seq_len)
-        self.inp_vector, self.tar_vector, self.inp_builder, self.tar_builder = loader.build_dataset()
+        self.loader = DatasetLoader(self.inp_lang_path,
+                                    self.tar_lang_path,
+                                    self.min_seq_len,
+                                    self.max_seq_len)
+        self.inp_vector, self.tar_vector, self.inp_builder, self.tar_builder = self.loader.build_dataset()
         inp_vocab_size = len(self.inp_builder.word_index) + 1
         tar_vocab_size = len(self.tar_builder.word_index) + 1
 
@@ -73,6 +72,16 @@ class TrainTransformer:
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
 
+        # Initialize check point
+        self.saved_checkpoint = os.getcwd() + "/saved_checkpoint/"
+        os.makedirs(self.saved_checkpoint, exist_ok=True)
+        ckpt = tf.train.Checkpoint(transformer=self.transformer,
+                                   optimizer=self.optimizer)
+        self.ckpt_manager = tf.train.CheckpointManager(ckpt, self.saved_checkpoint, max_to_keep=5)
+
+        # Initialize Bleu score
+        self.bleu_score = BleuScore()
+
     def train_step(self, inp, tar):
         tar_inp = tar[:, :-1]
         tar_real = tar[:, 1:]
@@ -85,17 +94,34 @@ class TrainTransformer:
         self.optimizer.apply_gradients(zip(gradients, self.transformer.trainable_variables))
 
         self.train_loss(loss)
-        self.train_accuracy(self.accuracy_function(tar_real, predictions))
+        self.train_accuracy(accuracy_function(tar_real, predictions))
 
-    def accuracy_function(self, real, pred):
-        accuracies = tf.equal(real, tf.argmax(pred, axis=2))
+    def evaluation(self, inp, tar):
+        score = 0
+        for encode_input, target in zip(inp, tar):
+            # Target text
+            target_sentence = " ".join(self.tar_builder.sequences_to_texts([target.numpy()]))
 
-        mask = tf.math.logical_not(tf.math.equal(real, 0))
-        accuracies = tf.math.logical_and(mask, accuracies)
+            # Encode input
+            encode_input = tf.expand_dims(encode_input, axis=0)
 
-        accuracies = tf.cast(accuracies, dtype=tf.float32)
-        mask = tf.cast(mask, dtype=tf.float32)
-        return tf.reduce_sum(accuracies) / tf.reduce_sum(mask)
+            # Decode input
+            start = [self.tar_builder.word_index["<sos>"]]
+            end = [self.tar_builder.word_index["<eos>"]]
+            decode_input = tf.convert_to_tensor(start, dtype=tf.int64)
+            decode_input = tf.expand_dims(decode_input, 0)
+
+            for _ in range(self.max_seq_len):
+                predicted = self.transformer(encode_input, decode_input, is_train=False)
+                predicted = predicted[:, -1:, :]
+                predicted_id = tf.argmax(predicted, axis=-1)
+                decode_input = tf.concat([decode_input, predicted_id], axis=-1)
+
+                if predicted_id == end:
+                    break
+            pred_sentence = " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
+            score += self.bleu_score(pred_sentence, target_sentence)
+        return score
 
     def fit(self):
 
@@ -109,26 +135,44 @@ class TrainTransformer:
                                 padding="post",
                                 truncating="post")
 
-        train_ds = tf.data.Dataset.from_tensor_slices((train_x, train_y)).shuffle(42).batch(self.batch_size)
+        train_ds = tf.data.Dataset.from_tensor_slices((train_x, train_y))
+        train_ds = train_ds.batch(self.batch_size)
+        train_ds = train_ds.shuffle(42)
 
         train_len = len(train_x)
         split_test = int(train_len * self.split_test)
         self.N_batch = train_len // self.batch_size
 
         for epoch in range(self.epochs):
+            bleu_score = 0
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
+            print("===========================================================")
             for batch, (inp, tar) in enumerate(train_ds):
                 self.train_step(inp, tar)
 
                 if batch % 50 == 0:
-                    print('Epoch {} -- Batch {} -- Loss: {.4f} -- Accuracy: {.4f}'.format(epoch + 1, batch,
-                                                                                          self.train_loss.result(),
-                                                                                          self.train_accuracy.result()))
+                    print('Epoch {} -- Batch: {} -- Loss: {:.4f} -- Accuracy: {:.4f}'.format(epoch + 1, batch,
+                                                                                             self.train_loss.result(),
+                                                                                             self.train_accuracy.result()))
+            print("-----------------------------------------------------------")
+            if self.bleu:
+                for batch, (inp, tar) in enumerate(train_ds.take(1)):
+                    bleu_score = self.evaluation(inp, tar)
+                    print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- Bleu_score: {:.4f}'.format(epoch + 1,
+                                                                                                      self.train_loss.result(),
+                                                                                                      self.train_accuracy.result(),
+                                                                                                      bleu_score))
+            else:
+                print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} '.format(epoch + 1,
+                                                                             self.train_loss.result(),
+                                                                             self.train_accuracy.result()))
 
-            print('Epoch {} -- Loss: {.4f} -- Accuracy: {.4f}'.format(epoch + 1,
-                                                                      self.train_loss.result(),
-                                                                      self.train_accuracy.result()))
+            if (epoch + 1) % 10 == 0:
+                ckpt_save_path = self.ckpt_manager.save()
+                print(f'[INFO] Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
+
+            print("===========================================================")
 
 
 if __name__ == '__main__':
@@ -140,7 +184,7 @@ if __name__ == '__main__':
     parser.add_argument("--inp-lang", required=True, type=str)
     parser.add_argument("--tar-lang", required=True, type=str)
     parser.add_argument("--batch-size", default=128, type=int)
-    parser.add_argument("--epochs", default=1000, type=int)
+    parser.add_argument("--epochs", default=10, type=int)
     parser.add_argument("--n_layers", default=1, type=int)
     parser.add_argument("--d-model", default=256, type=int)
     parser.add_argument("--header-size", default=8, type=int)

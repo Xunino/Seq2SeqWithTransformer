@@ -67,6 +67,21 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         return result
 
 
+def accuracy_function(real, pred):
+    # Check equal same -> True
+    real = tf.cast(real, dtype=tf.int64)
+    accuracies = tf.equal(real, tf.argmax(pred, axis=2))
+
+    # Ìf both mask and accuracies is True -> True
+    mask = tf.math.logical_not(tf.math.equal(real, 0))
+    accuracies = tf.math.logical_and(mask, accuracies)
+
+    # Return True value -> 1
+    accuracies = tf.cast(accuracies, dtype=tf.float32)
+    mask = tf.cast(mask, dtype=tf.float32)
+    return tf.reduce_sum(accuracies) / tf.reduce_sum(mask)
+
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
