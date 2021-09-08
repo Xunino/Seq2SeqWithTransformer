@@ -114,4 +114,51 @@ Epoch 56 -- Loss: 0.0335 -- Accuracy: 0.9742
 ===========================================================
 ```
 
-**Comments about these results:**
+Other result
+
+```
+===========================================================
+Epoch 100 -- Batch: 0 -- Loss: 0.0359 -- Accuracy: 0.9779
+Epoch 100 -- Batch: 50 -- Loss: 0.0312 -- Accuracy: 0.9761
+Epoch 100 -- Batch: 100 -- Loss: 0.0312 -- Accuracy: 0.9761
+Epoch 100 -- Batch: 150 -- Loss: 0.0315 -- Accuracy: 0.9758
+Epoch 100 -- Batch: 200 -- Loss: 0.0313 -- Accuracy: 0.9759
+Epoch 100 -- Batch: 250 -- Loss: 0.0313 -- Accuracy: 0.9759
+Epoch 100 -- Batch: 300 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 350 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 400 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 450 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 500 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 550 -- Loss: 0.0312 -- Accuracy: 0.9759
+Epoch 100 -- Batch: 600 -- Loss: 0.0313 -- Accuracy: 0.9759
+Epoch 100 -- Batch: 650 -- Loss: 0.0314 -- Accuracy: 0.9759
+Epoch 100 -- Batch: 700 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 750 -- Loss: 0.0313 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 800 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 850 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 900 -- Loss: 0.0311 -- Accuracy: 0.9760
+Epoch 100 -- Batch: 950 -- Loss: 0.0312 -- Accuracy: 0.9760
+-----------------------------------------------------------
+Input   :  <sos> and the speed with which they associate it with quot slumdog millionaire quot or the favelas in rio speaks to the enduring nature <eos>
+Predict :  <sos> và tốc độ mà chúng liên hệ nó với quot triệu phú khu ổ chuột quot hay những khu phố quot favela quot ở rio nói lên bản chất bền vững đó <eos>
+Target  :  <sos> và tốc độ mà chúng liên hệ nó với quot triệu phú khu ổ chuột quot hay những khu phố quot favela quot ở rio nói lên bản chất bền vững đó <eos>
+-----------------------------------------------------------
+Input   :  <sos> in a filmclub season about democracy and government we screened quot mr smith goes to washington quot <eos>
+Predict :  <sos> trong mùa chiếu của câu lạc bộ phim về dân chủ và chính quyền chúng tôi đã chiếu quot ông smith đến washington quot <eos>
+Target  :  <sos> trong mùa chiếu của câu lạc bộ phim về dân chủ và chính quyền chúng tôi đã chiếu quot ông smith đến washington quot <eos>
+-----------------------------------------------------------
+Input   :  <sos> made in 1939 the film is older than most of our members apos grandparents <eos>
+Predict :  <sos> được làm vào năm 1939 bộ phim có tuổi già hơn tuổi của hầu hết ông bà của các thành viên <eos>
+Target  :  <sos> được làm vào năm 1939 bộ phim có tuổi già hơn tuổi của hầu hết ông bà của các thành viên <eos>
+-----------------------------------------------------------
+Input   :  <sos> frank capra apos s classic values independence and propriety <eos>
+Predict :  <sos> sự cổ điển của frank capra có giá trị ở tính độc lập và sự thích nghi <eos>
+Target  :  <sos> sự cổ điển của frank capra có giá trị ở tính độc lập và sự thích nghi <eos>
+-----------------------------------------------------------
+Input   :  <sos> it shows how to do right how to be heroically awkward <eos>
+Predict :  <sos> bộ phim chỉ ra làm thế nào để làm đúng làm thế nào để trở nên kì lạ phi thường <eos>
+Target  :  <sos> bộ phim chỉ ra làm thế nào để làm đúng làm thế nào để trở nên kì lạ phi thường <eos>
+-----------------------------------------------------------
+Epoch 100 -- Loss: 0.0312 -- Accuracy: 0.9760 -- Bleu_score: 0.9740
+===========================================================
+```
