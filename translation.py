@@ -51,8 +51,8 @@ if __name__ == '__main__':
 
     # FIXME
     # Arguments users used when running command lines
-    parser.add_argument("--inp-lang", required=True, type=str)
-    parser.add_argument("--tar-lang", required=True, type=str)
+    parser.add_argument("--input-path", required=True, type=str)
+    parser.add_argument("--target-path", required=True, type=str)
     parser.add_argument("--batch-size", default=128, type=int)
     parser.add_argument("--epochs", default=1000, type=int)
     parser.add_argument("--n_layers", default=1, type=int)
@@ -83,8 +83,8 @@ if __name__ == '__main__':
 
     # FIXME
     # Do Training
-    translate = Translate(inp_lang_path=args.inp_lang,
-                          tar_lang_path=args.tar_lang,
+    translate = Translate(inp_lang_path=args.input_path,
+                          tar_lang_path=args.target_path,
                           batch_size=args.batch_size,
                           epochs=args.epochs,
                           d_model=args.d_model,

@@ -1,6 +1,7 @@
 # Seq2Seq With Transformer
 
-Implementation of [Attention is all you need](https://arxiv.org/pdf/1706.03762.pdf).
+Design Machine Translation Engine for Vietnamese using Transformer Architecture from
+paper [Attention Is All You Need](https://arxiv.org/pdf/1706.03762.pdf). Give us a star if you like this repo.
 
 ## Architecture Image
 
@@ -10,9 +11,9 @@ Implementation of [Attention is all you need](https://arxiv.org/pdf/1706.03762.p
 
 Authors:
 
-- Github:
-    - https://github.com/Xunino
-    
+- Github: Xunino
+- Email: ndlinh.ai@gmail.com
+
 ## I. Set up environment
 
 - Step 1:
@@ -36,67 +37,81 @@ conda activate {your_env_name}
 ## II. Set up your dataset
 
 - Guide user how to download your data and set the data pipeline
+
 - References: [NLP](https://github.com/Xunino/Seq2SeqWithTransformer/tree/main/dataset/seq2seq)
+
+- Data pipeline example:
+
+| train.en   |   train.vi      |
+|----------|:-------------:|
+| I love you       |  Tôi yêu bạn|
+| ....             |    .... |
+
+**Note:** You can use your data for train to this model.
 
 ## III. Training Process
 
 Training script:
 
 ```bash
-python train.py  --inp-lang=$inp_lang --tar-lang=$tar_lang \
-                 --n_layers=2 --d-model=512 --diff-deep=2048 \
-                 --min-sentence=0 --max-sentence=50 --bleu=True \
-                 --warmup-steps=150 --epochs=1000
+python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input_data} --n_layers=2 --header-size=8 --d-model=512 --diff-deep=2048 --min-sentence=0 --max-sentence=50 --bleu=True
 ```
-
-**Note**:
-
-- If you want to retrain model, you can use this param: ```--retrain=True```
-- Click [Here](https://colab.research.google.com/drive/11X9pk2rdBAjXVQugfqxPDezZCuj8_QD9#scrollTo=jqC_yVxZ4qje) to open
-  notebook in google colab.
 
 **There are some important arguments for the script you should consider when running it:**
 
 - `dataset`: The folder of dataset
     - `train.en.txt`: input language
     - `train.vi.txt`: target language
+- `--input-path`: input language path (E.g. /dataset/seq2seq/train.en.txt)
+- `--target-path`: target language path (E.g. /dataset/seq2seq/train.vi.txt)
+- `--n_layers`: Number Encode vs Decode layers, default is 2
+- `--header-size`: Number Multi Head Attention, default is 8
+- `--d-model`: The dimension of linear projection for all sentence. It was mentioned in Section `3.2.2` on
+  the [page 5](https://arxiv.org/pdf/1706.03762.pdf)
+- `--diff-deep`: Hidden size in Position-Wise Feed-Forward Network. It was mentioned in Section `3.3`
+- `--min-sentence`: Min length of sentence to filter in dataset
+- `--max-sentence`: Max length of sentence to filter in dataset
+- `--bleu`: bool values. It's using to evaluate NLP model ([More](https://aclanthology.org/P02-1040.pdf))
+
+**Note**:
+
+- If you want to retrain model, you can use this param: ```--retrain=True```
+- Click [Here](https://colab.research.google.com/drive/1mxS6_1QzGMPuGSNAg5N-FjKjflneZgbY?usp=sharing) to open notebook
+  in google colab.
 
 ## IV. Predict Process
 
 ```bash
-python translation.py --test-path=${link_to_test_data} --inp-lang-path=${link_to_input_data}
+python translation.py --input-path=${path_to_test_data} --target-path=${path_to_input_data}
 ```
 
 ## V. Result and Comparision
 
 ```
------------------------------------------------------------------
-Input    :  <sos> they wrote almost a thousand pages on the topic <eos>
-Predicted:  <sos> họ viết gần 1000 trang về của tranh của mình <eos> <eos> <eos>
-Target   :  <sos> họ viết gần 1000 trang về chủ đề này <eos>
------------------------------------------------------------------
-Input    :  <sos> we blow it up and look at the pieces <eos>
-Predicted:  <sos> chúng tôi cho nó nổ và xem xét từng mảnh nhỏ <eos> <eos>
-Target   :  <sos> chúng tôi cho nó nổ và xem xét từng mảnh nhỏ <eos>
------------------------------------------------------------------
-Input    :  <sos> this is the euphore smog chamber in spain <eos>
-Predicted:  <sos> đây là phòng nghiên cứu khói bụi euphore ở tây ban nha <eos>
-Target   :  <sos> đây là phòng nghiên cứu khói bụi euphore ở tây ban nha <eos>
------------------------------------------------------------------
-Input    :  <sos> we also fly all over the world looking for this thing <eos>
-Predicted:  <sos> chúng tôi còn bay khắp thế giới để tìm hiểu 50 tiết kiệm
-Target   :  <sos> chúng tôi còn bay khắp thế giới để tìm phân tử này <eos>
------------------------------------------------------------------
-Input    :  <sos> this is the tower in the middle of the rainforest from above <eos>
-Predicted:  <sos> đây chính là cái tháp giữa rừng sâu nhiều với 100 quốc <eos>
-Target   :  <sos> đây chính là cái tháp giữa rừng sâu nhìn từ trên cao <eos>
------------------------------------------------------------------
-Input    :  <sos> christopher decharms a look inside the brain in real time <eos>
-Predicted:  <sos> christopher decharms quét não bộ theo thời gian thực <eos> <eos> <eos> <eos>
-Target   :  <sos> christopher decharms quét não bộ theo thời gian thực <eos>
-=================================================================
-Epoch 376 -- Loss: 30.585018157958984 -- Bleu_score: 0.6258203949505547
-=================================================================
+===========================================================
+Epoch 18 -- Batch: 0 -- Loss: 0.1006 -- Accuracy: 0.9135
+Epoch 18 -- Batch: 50 -- Loss: 0.0813 -- Accuracy: 0.9384
+Epoch 18 -- Batch: 100 -- Loss: 0.0788 -- Accuracy: 0.9405
+Epoch 18 -- Batch: 150 -- Loss: 0.0785 -- Accuracy: 0.9412
+Epoch 18 -- Batch: 200 -- Loss: 0.0779 -- Accuracy: 0.9411
+Epoch 18 -- Batch: 250 -- Loss: 0.0778 -- Accuracy: 0.9410
+Epoch 18 -- Batch: 300 -- Loss: 0.0772 -- Accuracy: 0.9414
+Epoch 18 -- Batch: 350 -- Loss: 0.0771 -- Accuracy: 0.9415
+Epoch 18 -- Batch: 400 -- Loss: 0.0772 -- Accuracy: 0.9415
+Epoch 18 -- Batch: 450 -- Loss: 0.0772 -- Accuracy: 0.9418
+Epoch 18 -- Batch: 500 -- Loss: 0.0772 -- Accuracy: 0.9418
+Epoch 18 -- Batch: 550 -- Loss: 0.0766 -- Accuracy: 0.9420
+Epoch 18 -- Batch: 600 -- Loss: 0.0766 -- Accuracy: 0.9421
+Epoch 18 -- Batch: 650 -- Loss: 0.0768 -- Accuracy: 0.9420
+Epoch 18 -- Batch: 700 -- Loss: 0.0768 -- Accuracy: 0.9420
+Epoch 18 -- Batch: 750 -- Loss: 0.0767 -- Accuracy: 0.9421
+Epoch 18 -- Batch: 800 -- Loss: 0.0767 -- Accuracy: 0.9421
+Epoch 18 -- Batch: 850 -- Loss: 0.0766 -- Accuracy: 0.9421
+Epoch 18 -- Batch: 900 -- Loss: 0.0766 -- Accuracy: 0.9421
+Epoch 18 -- Batch: 950 -- Loss: 0.0766 -- Accuracy: 0.9421
+-----------------------------------------------------------
+Epoch 18 -- Loss: 0.0766 -- Accuracy: 0.9421 
+===========================================================
 ```
 
 **Comments about these results:**
