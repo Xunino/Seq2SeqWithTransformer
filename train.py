@@ -1,4 +1,6 @@
 import os
+import time
+
 import numpy as np
 import tensorflow as tf
 from loader import DatasetLoader
@@ -72,14 +74,18 @@ class TrainTransformer:
 
         # Initialize check point
         self.saved_checkpoint = os.getcwd() + "/saved_checkpoint/"
-        os.makedirs(self.saved_checkpoint, exist_ok=True)
+        if not os.path.exists(self.saved_checkpoint):
+            os.mkdir(self.saved_checkpoint)
         ckpt = tf.train.Checkpoint(transformer=self.transformer,
                                    optimizer=self.optimizer)
         self.ckpt_manager = tf.train.CheckpointManager(ckpt, self.saved_checkpoint, max_to_keep=5)
 
         if retrain:
-            print("[INFO] Retrain model...")
+            print("[INFO] Start Retrain...")
+            print("[INFO] Loading model...")
+            time.sleep(1)
             self.ckpt_manager.restore_or_initialize()
+            print("[INFO] DONE!")
 
         # Initialize Bleu score
         self.bleu_score = BleuScore()
