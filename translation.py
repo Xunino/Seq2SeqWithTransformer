@@ -19,7 +19,7 @@ class Translate(TrainTransformer):
             self.ckpt_manager.restore_or_initialize()
             print("[INFO] Restore models")
 
-    def __call__(self, text):
+    def __call__(self, text: str):
         text = self.loader.remove_punctuation(text)
         vector = self.inp_builder.texts_to_sequences(text.split())
         vector = tf.reshape(vector, shape=(1, -1))
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                           retrain=args.retrain,
                           bleu=args.bleu,
                           debug=args.debug)
-
-    text = "Opened dynamic library"
-    print(translate(text))
+    while True:
+        text = str(input("Enter your text to translate: "))
+        print("[INFO] Translate: ", translate(text))
     # python translation.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt"
