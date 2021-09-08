@@ -98,6 +98,9 @@ if __name__ == '__main__':
                           bleu=args.bleu,
                           debug=args.debug)
     while True:
-        text = str(input("Enter your text to translate: "))
-        print("[INFO] Translate: ", translate(text))
+        print("\n===========================================")
+        text = str(input("[INFO] Enter text: "))
+        print("-------------------------------------------")
+        print("\n[INFO] Input text : ", text.lower())
+        print("[INFO] Translate  : ", translate(text.lower()))
     # python translation.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt"

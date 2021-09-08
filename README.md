@@ -85,32 +85,32 @@ python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input
 python translation.py --input-path=${path_to_test_data} --target-path=${path_to_input_data}
 ```
 
-## V. Result and Comparision
+## V. Result
 
 ```
 ===========================================================
-Epoch 18 -- Batch: 0 -- Loss: 0.1006 -- Accuracy: 0.9135
-Epoch 18 -- Batch: 50 -- Loss: 0.0813 -- Accuracy: 0.9384
-Epoch 18 -- Batch: 100 -- Loss: 0.0788 -- Accuracy: 0.9405
-Epoch 18 -- Batch: 150 -- Loss: 0.0785 -- Accuracy: 0.9412
-Epoch 18 -- Batch: 200 -- Loss: 0.0779 -- Accuracy: 0.9411
-Epoch 18 -- Batch: 250 -- Loss: 0.0778 -- Accuracy: 0.9410
-Epoch 18 -- Batch: 300 -- Loss: 0.0772 -- Accuracy: 0.9414
-Epoch 18 -- Batch: 350 -- Loss: 0.0771 -- Accuracy: 0.9415
-Epoch 18 -- Batch: 400 -- Loss: 0.0772 -- Accuracy: 0.9415
-Epoch 18 -- Batch: 450 -- Loss: 0.0772 -- Accuracy: 0.9418
-Epoch 18 -- Batch: 500 -- Loss: 0.0772 -- Accuracy: 0.9418
-Epoch 18 -- Batch: 550 -- Loss: 0.0766 -- Accuracy: 0.9420
-Epoch 18 -- Batch: 600 -- Loss: 0.0766 -- Accuracy: 0.9421
-Epoch 18 -- Batch: 650 -- Loss: 0.0768 -- Accuracy: 0.9420
-Epoch 18 -- Batch: 700 -- Loss: 0.0768 -- Accuracy: 0.9420
-Epoch 18 -- Batch: 750 -- Loss: 0.0767 -- Accuracy: 0.9421
-Epoch 18 -- Batch: 800 -- Loss: 0.0767 -- Accuracy: 0.9421
-Epoch 18 -- Batch: 850 -- Loss: 0.0766 -- Accuracy: 0.9421
-Epoch 18 -- Batch: 900 -- Loss: 0.0766 -- Accuracy: 0.9421
-Epoch 18 -- Batch: 950 -- Loss: 0.0766 -- Accuracy: 0.9421
+Epoch 56 -- Batch: 0 -- Loss: 0.0391 -- Accuracy: 0.9669
+Epoch 56 -- Batch: 50 -- Loss: 0.0359 -- Accuracy: 0.9726
+Epoch 56 -- Batch: 100 -- Loss: 0.0349 -- Accuracy: 0.9733
+Epoch 56 -- Batch: 150 -- Loss: 0.0343 -- Accuracy: 0.9736
+Epoch 56 -- Batch: 200 -- Loss: 0.0338 -- Accuracy: 0.9739
+Epoch 56 -- Batch: 250 -- Loss: 0.0337 -- Accuracy: 0.9739
+Epoch 56 -- Batch: 300 -- Loss: 0.0336 -- Accuracy: 0.9741
+Epoch 56 -- Batch: 350 -- Loss: 0.0336 -- Accuracy: 0.9740
+Epoch 56 -- Batch: 400 -- Loss: 0.0335 -- Accuracy: 0.9741
+Epoch 56 -- Batch: 450 -- Loss: 0.0335 -- Accuracy: 0.9742
+Epoch 56 -- Batch: 500 -- Loss: 0.0335 -- Accuracy: 0.9742
+Epoch 56 -- Batch: 550 -- Loss: 0.0333 -- Accuracy: 0.9743
+Epoch 56 -- Batch: 600 -- Loss: 0.0334 -- Accuracy: 0.9743
+Epoch 56 -- Batch: 650 -- Loss: 0.0334 -- Accuracy: 0.9743
+Epoch 56 -- Batch: 700 -- Loss: 0.0335 -- Accuracy: 0.9742
+Epoch 56 -- Batch: 750 -- Loss: 0.0336 -- Accuracy: 0.9742
+Epoch 56 -- Batch: 800 -- Loss: 0.0335 -- Accuracy: 0.9743
+Epoch 56 -- Batch: 850 -- Loss: 0.0335 -- Accuracy: 0.9742
+Epoch 56 -- Batch: 900 -- Loss: 0.0334 -- Accuracy: 0.9742
+Epoch 56 -- Batch: 950 -- Loss: 0.0335 -- Accuracy: 0.9742
 -----------------------------------------------------------
-Epoch 18 -- Loss: 0.0766 -- Accuracy: 0.9421 
+Epoch 56 -- Loss: 0.0335 -- Accuracy: 0.9742 
 ===========================================================
 ```
 
