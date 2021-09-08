@@ -55,12 +55,12 @@ if __name__ == '__main__':
     parser.add_argument("--target-path", required=True, type=str)
     parser.add_argument("--batch-size", default=128, type=int)
     parser.add_argument("--epochs", default=1000, type=int)
-    parser.add_argument("--n_layers", default=1, type=int)
-    parser.add_argument("--d-model", default=256, type=int)
+    parser.add_argument("--n_layers", default=2, type=int)
+    parser.add_argument("--d-model", default=512, type=int)
     parser.add_argument("--header-size", default=8, type=int)
-    parser.add_argument("--diff-deep", default=512, type=int)
-    parser.add_argument("--min-sentence", default=4, type=int)
-    parser.add_argument("--max-sentence", default=10, type=int)
+    parser.add_argument("--diff-deep", default=2048, type=int)
+    parser.add_argument("--min-sentence", default=0, type=int)
+    parser.add_argument("--max-sentence", default=50, type=int)
     parser.add_argument("--warmup-steps", default=4000, type=int)
     parser.add_argument("--retrain", default=False, type=bool)
     parser.add_argument("--bleu", default=False, type=bool)
@@ -98,6 +98,6 @@ if __name__ == '__main__':
                           bleu=args.bleu,
                           debug=args.debug)
 
-    text = "Enter the sentence to translate:"
+    text = "Opened dynamic library"
     print(translate(text))
-    # python translation.py --inp-lang="dataset/seq2seq/train.en.txt" --tar-lang="dataset/seq2seq/train.vi.txt"
+    # python translation.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt"
