@@ -77,6 +77,10 @@ class TrainTransformer:
                                    optimizer=self.optimizer)
         self.ckpt_manager = tf.train.CheckpointManager(ckpt, self.saved_checkpoint, max_to_keep=5)
 
+        if retrain:
+            print("[INFO] Retrain model...")
+            self.ckpt_manager.restore_or_initialize()
+
         # Initialize Bleu score
         self.bleu_score = BleuScore()
 
