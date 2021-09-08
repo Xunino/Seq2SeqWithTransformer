@@ -1,7 +1,6 @@
 # Seq2Seq With Transformer
 
-Implementation of [Attention is all you need](https://arxiv.org/pdf/1706.03762.pdf). This library is part of our
-project: Building an AI library with ProtonX.
+Implementation of [Attention is all you need](https://arxiv.org/pdf/1706.03762.pdf).
 
 ## Architecture Image
 
@@ -13,11 +12,7 @@ Authors:
 
 - Github:
     - https://github.com/Xunino
-
-Advisors:
-
-- Github: https://github.com/bangoc123
-
+    
 ## I. Set up environment
 
 - Step 1:
