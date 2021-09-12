@@ -70,8 +70,10 @@ if __name__ == '__main__':
                             d_model,
                             n_layers,
                             maximum_position_encoding)
-    temp_input = tf.random.uniform((64, 62), dtype=tf.int64, minval=0, maxval=200)
-
+    # temp_input = tf.random.uniform((64, 62), dtype=tf.int64, minval=0, maxval=200)
+    temp_input = tf.constant(
+        [[1, 464, 45, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
     sample_encoder_output = sample_encoder(temp_input, is_train=False, mask=None)
 
     print(sample_encoder_output.shape)  # (batch_size, input_seq_len, d_model)

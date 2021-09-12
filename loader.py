@@ -18,6 +18,8 @@ def remove_punctuation(sen):
     """
     sen = sen.lower()
     sen = sen.strip()
+    sen = re.sub("\x80", "", sen)
+    sen = re.sub("x94", "", sen)
     sen = re.sub("'", "", sen)
     sen = re.sub("\s+", " ", sen)
     sen = " ".join([s for s in sen.split() if s not in list(string.punctuation)])
@@ -146,4 +148,6 @@ class DatasetLoader:
 
 
 if __name__ == '__main__':
-    DatasetLoader("dataset/seq2seq/train.en.txt", "dataset/seq2seq/train.vi.txt").build_dataset()
+    _, _, a, b = DatasetLoader("dataset/seq2seq/train.en.txt", "dataset/seq2seq/train.vi.txt", min_length=0,
+                               max_length=50).build_dataset()
+    print(len(a.word_index))

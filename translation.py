@@ -1,16 +1,12 @@
-import json
 import os
+import json
 import time
-
-import numpy as np
 import tensorflow as tf
-from keras_preprocessing.sequence import pad_sequences
-
-from loader import remove_punctuation
 from metrics import CustomSchedule
-from models.model import Transformer
-from train import TrainTransformer
 from argparse import ArgumentParser
+from models.model import Transformer
+from loader import remove_punctuation
+from keras_preprocessing.sequence import pad_sequences
 
 
 class Translate:
@@ -39,27 +35,17 @@ class Translate:
                                        pe_input=max_seq_len,
                                        pe_target=max_seq_len)
 
-        # Initialize learning rate scheduler
-        learning_scheduler = CustomSchedule(d_model)
-
         # Initialize optimizer
-        self.optimizer = tf.keras.optimizers.Adam(learning_scheduler, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
-
-        # Initialize
-        self.train_loss = tf.keras.metrics.Mean(name='train_loss')
-        self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+        self.optimizer = tf.keras.optimizers.Adam(0.001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
         # Initialize check point
         self.saved_checkpoint = os.getcwd() + "/saved_checkpoint/"
-        if not os.path.exists(self.saved_checkpoint):
-            os.mkdir(self.saved_checkpoint)
         ckpt = tf.train.Checkpoint(transformer=self.transformer,
                                    optimizer=self.optimizer)
         self.ckpt_manager = tf.train.CheckpointManager(ckpt, self.saved_checkpoint, max_to_keep=5)
 
         print("[INFO] Load models", end="")
         self.ckpt_manager.restore_or_initialize()
-        time.sleep(2)
         print(" --> DONE!")
 
     def load_tokenizer(self, name_vocab):
@@ -68,8 +54,8 @@ class Translate:
 
     def __call__(self, text: str):
         text = remove_punctuation(text)
-        vector = [self.inp_builder[w] for w in text.split()]
-        vector = tf.reshape(vector, shape=(1, -1))
+        vector = [self.inp_builder[w] for w in text.split() if w in self.inp_builder.keys()]
+        vector = tf.expand_dims(vector, axis=0)
         tensor = pad_sequences(vector,
                                maxlen=self.max_seq_len,
                                padding="post",
@@ -82,7 +68,7 @@ class Translate:
         decode_input = tf.expand_dims(decode_input, 0)
 
         for _ in range(self.max_seq_len):
-            predicted = self.transformer(encode_input, decode_input, is_train=False)
+            predicted = self.transformer(encode_input, decode_input, False)
             predicted = predicted[:, -1:, :]
             predicted_id = tf.argmax(predicted, axis=-1)
             decode_input = tf.concat([decode_input, predicted_id], axis=-1)
