@@ -161,6 +161,6 @@ Input   :  <sos> i know i should mention i apos m making all these things <eos>
 Predict :  <sos> tôi biết là mình nên lưu ý là tôi làm ra tất cả những thứ này <eos>
 Target  :  <sos> tôi biết là mình nên lưu ý là tôi làm ra tất cả những thứ này <eos>
 -----------------------------------------------------------
-Epoch 100 -- Loss: 0.0931 -- Accuracy: 0.9313 -- Bleu_score: 0.8431
+Epoch 80 -- Loss: 0.0931 -- Accuracy: 0.9313 -- Bleu_score: 0.8431
 ===========================================================
 ```
