@@ -255,8 +255,3 @@ if __name__ == '__main__':
                      debug=args.debug).fit()
 
     # python train.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt" --bleu=True
-"""--input-path=$input_path --target-path=$target_path \
-                  --n_layers=2 --d-model=512 --diff-deep=2048 \
-                  --min-sentence=0 --max-sentence=50 \
-                  --epochs=500 --test-size=0.01
-                  """

@@ -64,7 +64,7 @@ class DatasetLoader:
         self.min_length = min_length
         self.max_length = max_length
 
-        self.save_dict = os.getcwd() + "/dataset/seq2seq/{}_vocab.json"
+        self.save_dict = os.getcwd() + "/saved_checkpoint/{}_vocab.json"
 
     def save_tokenizer(self, object, name_vocab):
         f = open(self.save_dict.format(name_vocab), "w", encoding="utf-8")
