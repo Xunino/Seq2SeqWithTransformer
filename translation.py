@@ -1,4 +1,5 @@
 import os
+import io
 import json
 import time
 import tensorflow as tf
@@ -7,6 +8,7 @@ from argparse import ArgumentParser
 from models.model import Transformer
 from loader import remove_punctuation
 from keras_preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import tokenizer_from_json
 
 
 class Translate:
@@ -14,16 +16,15 @@ class Translate:
 
         home = os.getcwd()
         self.max_seq_len = max_seq_len
-        self.save_dict = home + "/dataset/seq2seq/{}_vocab.json"
+        self.save_dict = home + "/saved_checkpoint/{}_vocab.json"
 
         self.inp_builder = self.load_tokenizer(name_vocab="input")
         self.tar_builder = self.load_tokenizer(name_vocab="target")
-        self.values = list(self.tar_builder.values())
-        self.keys = list(self.tar_builder.keys())
+        self.keys = list(self.tar_builder.word_docs.keys())
 
         # Initialize Seq2Seq model
-        input_vocab_size = len(self.inp_builder) + 1
-        target_vocab_size = len(self.tar_builder) + 1
+        input_vocab_size = len(self.inp_builder.word_index) + 1
+        target_vocab_size = len(self.tar_builder.word_index) + 1
 
         # Initialize transformer model
         self.transformer = Transformer(inp_vocab_size=input_vocab_size,
@@ -49,12 +50,15 @@ class Translate:
         print(" --> DONE!")
 
     def load_tokenizer(self, name_vocab):
-        f = open(self.save_dict.format(name_vocab), "r", encoding="utf-8")
-        return json.load(f)
+        path_save = self.save_dict.format(name_vocab)
+        with io.open(path_save) as f:
+            data = json.load(f)
+            token = tokenizer_from_json(data)
+        return token
 
     def __call__(self, text: str):
         text = remove_punctuation(text)
-        vector = [self.inp_builder[w] for w in text.split() if w in self.inp_builder.keys()]
+        vector = [self.inp_builder.word_index[w] for w in text.split() if w in self.keys]
         vector = tf.expand_dims(vector, axis=0)
         tensor = pad_sequences(vector,
                                maxlen=self.max_seq_len,
@@ -62,8 +66,8 @@ class Translate:
                                truncating="post")
         encode_input = tf.convert_to_tensor(tensor, dtype=tf.int64)
 
-        start = [self.tar_builder["<sos>"]]
-        end = [self.tar_builder["<eos>"]]
+        start = [self.tar_builder.word_index["<sos>"]]
+        end = [self.tar_builder.word_index["<eos>"]]
         decode_input = tf.convert_to_tensor(start, dtype=tf.int64)
         decode_input = tf.expand_dims(decode_input, 0)
 
@@ -75,7 +79,7 @@ class Translate:
 
             if predicted_id == end:
                 break
-        return " ".join([self.keys[self.values.index(id_)] for id_ in decode_input])
+        return " ".join([self.tar_builder.index_word[id_] for id_ in decode_input])
 
 
 if __name__ == '__main__':

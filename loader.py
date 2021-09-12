@@ -2,6 +2,9 @@ import json
 import string
 import re
 import os
+import io
+
+from keras_preprocessing.text import tokenizer_from_json
 from tensorflow.keras.preprocessing.text import Tokenizer
 
 
@@ -18,8 +21,7 @@ def remove_punctuation(sen):
     """
     sen = sen.lower()
     sen = sen.strip()
-    sen = re.sub("\x80", "", sen)
-    sen = re.sub("x94", "", sen)
+    sen = re.sub("-", "", sen)
     sen = re.sub("'", "", sen)
     sen = re.sub("\s+", " ", sen)
     sen = " ".join([s for s in sen.split() if s not in list(string.punctuation)])
@@ -64,16 +66,14 @@ class DatasetLoader:
         self.min_length = min_length
         self.max_length = max_length
 
-        self.save_dict = os.getcwd() + "/saved_checkpoint/{}_vocab.json"
+        self.path_save = os.getcwd() + "/saved_checkpoint/{}_vocab.json"
 
-    def save_tokenizer(self, object, name_vocab):
-        f = open(self.save_dict.format(name_vocab), "w", encoding="utf-8")
-        json.dumps(f.write(str(object.word_index).replace("'", "\"")))
+    def save_tokenizer(self, tokenizer, name_vocab):
+        tokenizer_json = tokenizer.to_json()
+        path_save = self.path_save.format(name_vocab)
+        with io.open(path_save, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(tokenizer_json, ensure_ascii=False))
         f.close()
-
-    def load_tokenizer(self, name_vocab):
-        f = open(self.save_dict.format(name_vocab), "r", encoding="utf-8")
-        return json.load(f)
 
     def load_dataset(self):
         """
@@ -145,9 +145,3 @@ class DatasetLoader:
                 sentences_2.append(sen_2)
 
         return sentences_1, sentences_2
-
-
-if __name__ == '__main__':
-    _, _, a, b = DatasetLoader("dataset/seq2seq/train.en.txt", "dataset/seq2seq/train.vi.txt", min_length=0,
-                               max_length=50).build_dataset()
-    print(len(a.word_index))
