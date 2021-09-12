@@ -120,47 +120,47 @@ Other result
 
 ```
 ===========================================================
-Epoch 100 -- Batch: 0 -- Loss: 0.0359 -- Accuracy: 0.9779
-Epoch 100 -- Batch: 50 -- Loss: 0.0312 -- Accuracy: 0.9761
-Epoch 100 -- Batch: 100 -- Loss: 0.0312 -- Accuracy: 0.9761
-Epoch 100 -- Batch: 150 -- Loss: 0.0315 -- Accuracy: 0.9758
-Epoch 100 -- Batch: 200 -- Loss: 0.0313 -- Accuracy: 0.9759
-Epoch 100 -- Batch: 250 -- Loss: 0.0313 -- Accuracy: 0.9759
-Epoch 100 -- Batch: 300 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 350 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 400 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 450 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 500 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 550 -- Loss: 0.0312 -- Accuracy: 0.9759
-Epoch 100 -- Batch: 600 -- Loss: 0.0313 -- Accuracy: 0.9759
-Epoch 100 -- Batch: 650 -- Loss: 0.0314 -- Accuracy: 0.9759
-Epoch 100 -- Batch: 700 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 750 -- Loss: 0.0313 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 800 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 850 -- Loss: 0.0312 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 900 -- Loss: 0.0311 -- Accuracy: 0.9760
-Epoch 100 -- Batch: 950 -- Loss: 0.0312 -- Accuracy: 0.9760
+Epoch 80 -- Batch: 0 -- Loss: 0.0795 -- Accuracy: 0.9415
+Epoch 80 -- Batch: 50 -- Loss: 0.0871 -- Accuracy: 0.9354
+Epoch 80 -- Batch: 100 -- Loss: 0.0884 -- Accuracy: 0.9350
+Epoch 80 -- Batch: 150 -- Loss: 0.0891 -- Accuracy: 0.9343
+Epoch 80 -- Batch: 200 -- Loss: 0.0891 -- Accuracy: 0.9342
+Epoch 80 -- Batch: 250 -- Loss: 0.0891 -- Accuracy: 0.9340
+Epoch 80 -- Batch: 300 -- Loss: 0.0892 -- Accuracy: 0.9338
+Epoch 80 -- Batch: 350 -- Loss: 0.0894 -- Accuracy: 0.9339
+Epoch 80 -- Batch: 400 -- Loss: 0.0895 -- Accuracy: 0.9338
+Epoch 80 -- Batch: 450 -- Loss: 0.0899 -- Accuracy: 0.9335
+Epoch 80 -- Batch: 500 -- Loss: 0.0902 -- Accuracy: 0.9333
+Epoch 80 -- Batch: 550 -- Loss: 0.0906 -- Accuracy: 0.9330
+Epoch 80 -- Batch: 600 -- Loss: 0.0910 -- Accuracy: 0.9327
+Epoch 80 -- Batch: 650 -- Loss: 0.0911 -- Accuracy: 0.9326
+Epoch 80 -- Batch: 700 -- Loss: 0.0915 -- Accuracy: 0.9323
+Epoch 80 -- Batch: 750 -- Loss: 0.0918 -- Accuracy: 0.9321
+Epoch 80 -- Batch: 800 -- Loss: 0.0922 -- Accuracy: 0.9318
+Epoch 80 -- Batch: 850 -- Loss: 0.0926 -- Accuracy: 0.9316
+Epoch 80 -- Batch: 900 -- Loss: 0.0928 -- Accuracy: 0.9314
+Epoch 80 -- Batch: 950 -- Loss: 0.0931 -- Accuracy: 0.9313
 -----------------------------------------------------------
-Input   :  <sos> and the speed with which they associate it with quot slumdog millionaire quot or the favelas in rio speaks to the enduring nature <eos>
-Predict :  <sos> và tốc độ mà chúng liên hệ nó với quot triệu phú khu ổ chuột quot hay những khu phố quot favela quot ở rio nói lên bản chất bền vững đó <eos>
-Target  :  <sos> và tốc độ mà chúng liên hệ nó với quot triệu phú khu ổ chuột quot hay những khu phố quot favela quot ở rio nói lên bản chất bền vững đó <eos>
+Input   :  <sos> good then i shall attempt the impossible or at least the improbable <eos>
+Predict :  <sos> tốt vậy là tôi sẽ cố gắng làm điều không tưởng <eos>
+Target  :  <sos> tốt vậy tôi sẽ cố gắng làm điều bất khả thi này hoặc ít nhất là điều khó xảy ra <eos>
 -----------------------------------------------------------
-Input   :  <sos> in a filmclub season about democracy and government we screened quot mr smith goes to washington quot <eos>
-Predict :  <sos> trong mùa chiếu của câu lạc bộ phim về dân chủ và chính quyền chúng tôi đã chiếu quot ông smith đến washington quot <eos>
-Target  :  <sos> trong mùa chiếu của câu lạc bộ phim về dân chủ và chính quyền chúng tôi đã chiếu quot ông smith đến washington quot <eos>
+Input   :  <sos> that doesn apos t mean you have to go to an mba program <eos>
+Predict :  <sos> điều đó không có nghĩa bạn phải theo học chương trình mba <eos>
+Target  :  <sos> điều đó không có nghĩa bạn phải theo học chương trình mba <eos>
 -----------------------------------------------------------
-Input   :  <sos> made in 1939 the film is older than most of our members apos grandparents <eos>
-Predict :  <sos> được làm vào năm 1939 bộ phim có tuổi già hơn tuổi của hầu hết ông bà của các thành viên <eos>
-Target  :  <sos> được làm vào năm 1939 bộ phim có tuổi già hơn tuổi của hầu hết ông bà của các thành viên <eos>
+Input   :  <sos> and you can match that demand hour by hour for the whole year almost <eos>
+Predict :  <sos> và bạn có thể khớp nhu cầu đó từng giờ cho hầu như cả năm <eos>
+Target  :  <sos> và bạn có thể khớp nhu cầu đó từng giờ cho hầu như cả năm <eos>
 -----------------------------------------------------------
-Input   :  <sos> frank capra apos s classic values independence and propriety <eos>
-Predict :  <sos> sự cổ điển của frank capra có giá trị ở tính độc lập và sự thích nghi <eos>
-Target  :  <sos> sự cổ điển của frank capra có giá trị ở tính độc lập và sự thích nghi <eos>
+Input   :  <sos> i struggled to 91 unclear 93 day was a huge issue <eos>
+Predict :  <sos> tôi vật lộn kiếm sống qua ngày 91 không rõ 93 là một vấn đề lớn <eos>
+Target  :  <sos> tôi vật lộn kiếm sống qua ngày 91 không rõ 93 là một vấn đề lớn <eos>
 -----------------------------------------------------------
-Input   :  <sos> it shows how to do right how to be heroically awkward <eos>
-Predict :  <sos> bộ phim chỉ ra làm thế nào để làm đúng làm thế nào để trở nên kì lạ phi thường <eos>
-Target  :  <sos> bộ phim chỉ ra làm thế nào để làm đúng làm thế nào để trở nên kì lạ phi thường <eos>
+Input   :  <sos> i know i should mention i apos m making all these things <eos>
+Predict :  <sos> tôi biết là mình nên lưu ý là tôi làm ra tất cả những thứ này <eos>
+Target  :  <sos> tôi biết là mình nên lưu ý là tôi làm ra tất cả những thứ này <eos>
 -----------------------------------------------------------
-Epoch 100 -- Loss: 0.0312 -- Accuracy: 0.9760 -- Bleu_score: 0.9740
+Epoch 100 -- Loss: 0.0931 -- Accuracy: 0.9313 -- Bleu_score: 0.8431
 ===========================================================
 ```
