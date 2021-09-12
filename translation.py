@@ -1,27 +1,74 @@
+import json
 import os
+import time
 
 import numpy as np
 import tensorflow as tf
 from keras_preprocessing.sequence import pad_sequences
 
+from loader import remove_punctuation
+from metrics import CustomSchedule
+from models.model import Transformer
 from train import TrainTransformer
 from argparse import ArgumentParser
 
 
-class Translate(TrainTransformer):
-    def __init__(self, inp_lang_path, tar_lang_path, min_seq_len, max_seq_len, epochs, header_size,
-                 diff_deep, d_model, warmup, batch_size, n_layers, retrain, bleu,
-                 debug):
-        super(Translate, self).__init__(inp_lang_path, tar_lang_path, min_seq_len, max_seq_len, epochs, header_size,
-                                        diff_deep, d_model, warmup, batch_size, n_layers, retrain, bleu, debug)
+class Translate:
+    def __init__(self, max_seq_len, header_size, diff_deep, d_model, n_layers):
 
-        if os.listdir(self.saved_checkpoint) != []:
-            self.ckpt_manager.restore_or_initialize()
-            print("[INFO] Restore models")
+        home = os.getcwd()
+        self.max_seq_len = max_seq_len
+        self.save_dict = home + "/dataset/seq2seq/{}_vocab.json"
+
+        self.inp_builder = self.load_tokenizer(name_vocab="input")
+        self.tar_builder = self.load_tokenizer(name_vocab="target")
+        self.values = list(self.tar_builder.values())
+        self.keys = list(self.tar_builder.keys())
+
+        # Initialize Seq2Seq model
+        input_vocab_size = len(self.inp_builder) + 1
+        target_vocab_size = len(self.tar_builder) + 1
+
+        # Initialize transformer model
+        self.transformer = Transformer(inp_vocab_size=input_vocab_size,
+                                       tar_vocab_size=target_vocab_size,
+                                       n_layers=n_layers,
+                                       header_size=header_size,
+                                       diff_deep=diff_deep,
+                                       d_model=d_model,
+                                       pe_input=max_seq_len,
+                                       pe_target=max_seq_len)
+
+        # Initialize learning rate scheduler
+        learning_scheduler = CustomSchedule(d_model)
+
+        # Initialize optimizer
+        self.optimizer = tf.keras.optimizers.Adam(learning_scheduler, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+
+        # Initialize
+        self.train_loss = tf.keras.metrics.Mean(name='train_loss')
+        self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+
+        # Initialize check point
+        self.saved_checkpoint = os.getcwd() + "/saved_checkpoint/"
+        if not os.path.exists(self.saved_checkpoint):
+            os.mkdir(self.saved_checkpoint)
+        ckpt = tf.train.Checkpoint(transformer=self.transformer,
+                                   optimizer=self.optimizer)
+        self.ckpt_manager = tf.train.CheckpointManager(ckpt, self.saved_checkpoint, max_to_keep=5)
+
+        print("[INFO] Load models", end="")
+        self.ckpt_manager.restore_or_initialize()
+        time.sleep(2)
+        print(" --> DONE!")
+
+    def load_tokenizer(self, name_vocab):
+        f = open(self.save_dict.format(name_vocab), "r", encoding="utf-8")
+        return json.load(f)
 
     def __call__(self, text: str):
-        text = self.loader.remove_punctuation(text)
-        vector = self.inp_builder.texts_to_sequences(text.split())
+        text = remove_punctuation(text)
+        vector = [self.inp_builder[w] for w in text.split()]
         vector = tf.reshape(vector, shape=(1, -1))
         tensor = pad_sequences(vector,
                                maxlen=self.max_seq_len,
@@ -29,8 +76,8 @@ class Translate(TrainTransformer):
                                truncating="post")
         encode_input = tf.convert_to_tensor(tensor, dtype=tf.int64)
 
-        start = [self.tar_builder.word_index["<sos>"]]
-        end = [self.tar_builder.word_index["<eos>"]]
+        start = [self.tar_builder["<sos>"]]
+        end = [self.tar_builder["<eos>"]]
         decode_input = tf.convert_to_tensor(start, dtype=tf.int64)
         decode_input = tf.expand_dims(decode_input, 0)
 
@@ -42,7 +89,7 @@ class Translate(TrainTransformer):
 
             if predicted_id == end:
                 break
-        return " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
+        return " ".join([self.keys[self.values.index(id_)] for id_ in decode_input])
 
 
 if __name__ == '__main__':
@@ -51,20 +98,11 @@ if __name__ == '__main__':
 
     # FIXME
     # Arguments users used when running command lines
-    parser.add_argument("--input-path", required=True, type=str)
-    parser.add_argument("--target-path", required=True, type=str)
-    parser.add_argument("--batch-size", default=128, type=int)
-    parser.add_argument("--epochs", default=1000, type=int)
     parser.add_argument("--n_layers", default=2, type=int)
-    parser.add_argument("--d-model", default=512, type=int)
     parser.add_argument("--header-size", default=8, type=int)
+    parser.add_argument("--d-model", default=512, type=int)
     parser.add_argument("--diff-deep", default=2048, type=int)
-    parser.add_argument("--min-sentence", default=0, type=int)
     parser.add_argument("--max-sentence", default=50, type=int)
-    parser.add_argument("--warmup-steps", default=4000, type=int)
-    parser.add_argument("--retrain", default=False, type=bool)
-    parser.add_argument("--bleu", default=False, type=bool)
-    parser.add_argument("--debug", default=False, type=bool)
 
     args = parser.parse_args()
 
@@ -83,24 +121,15 @@ if __name__ == '__main__':
 
     # FIXME
     # Do Training
-    translate = Translate(inp_lang_path=args.input_path,
-                          tar_lang_path=args.target_path,
-                          batch_size=args.batch_size,
-                          epochs=args.epochs,
-                          d_model=args.d_model,
+    translate = Translate(d_model=args.d_model,
                           header_size=args.header_size,
                           diff_deep=args.diff_deep,
-                          min_seq_len=args.min_sentence,
                           max_seq_len=args.max_sentence,
-                          warmup=args.warmup_steps,
-                          n_layers=args.n_layers,
-                          retrain=args.retrain,
-                          bleu=args.bleu,
-                          debug=args.debug)
+                          n_layers=args.n_layers)
     while True:
         print("\n===========================================")
         text = str(input("[INFO] Enter text: "))
         print("-------------------------------------------")
         print("\n[INFO] Input text : ", text.lower())
         print("[INFO] Translate  : ", translate(text.lower()))
-    # python translation.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt"
+    # python translation.py

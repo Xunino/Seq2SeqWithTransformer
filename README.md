@@ -75,9 +75,11 @@ python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input
 
 **Note**:
 
-- If you want to retrain model, you can use this param: ```--retrain=True```
-- Click [Here](https://colab.research.google.com/drive/1mxS6_1QzGMPuGSNAg5N-FjKjflneZgbY?usp=sharing) to open notebook
-  in google colab.
+- If you want to retrain model, you can use this param: `--retrain=True`
+- <a href="https://colab.research.google.com/drive/1mxS6_1QzGMPuGSNAg5N-FjKjflneZgbY?usp=sharing" target="_blank">
+  <img src="https://camo.githubusercontent.com/84f0493939e0c4de4e6dbe113251b4bfb5353e57134ffd9fcab6b8714514d4d1/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667">
+
+</a>
 
 ## IV. Predict Process
 

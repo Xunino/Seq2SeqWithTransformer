@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 from models.model import Transformer
 from keras_preprocessing.sequence import pad_sequences
 from metrics import BleuScore, CustomSchedule, MaskedSoftmaxCELoss, accuracy_function
+from sklearn.model_selection import train_test_split
 
 
 class TrainTransformer:
@@ -23,6 +24,7 @@ class TrainTransformer:
                  warmup,
                  batch_size,
                  n_layers,
+                 test_size,
                  retrain,
                  bleu,
                  debug):
@@ -41,12 +43,7 @@ class TrainTransformer:
         self.retrain = retrain
         self.bleu = bleu
         self.debug = debug
-
-        # Initialize learning rate scheduler
-        learning_scheduler = CustomSchedule(d_model, warmup)
-
-        # Initialize optimizer
-        self.optimizer = tf.keras.optimizers.Adam(learning_scheduler, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+        self.test_size = test_size
 
         # Initialize dataset
         self.loader = DatasetLoader(self.inp_lang_path,
@@ -68,6 +65,13 @@ class TrainTransformer:
                                        d_model=self.d_model,
                                        pe_input=self.max_seq_len,
                                        pe_target=self.max_seq_len)
+
+        # Initialize learning rate scheduler
+        learning_scheduler = CustomSchedule(d_model, warmup)
+
+        # Initialize optimizer
+        self.optimizer = tf.keras.optimizers.Adam(learning_scheduler, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+
         # Initialize
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
@@ -143,16 +147,21 @@ class TrainTransformer:
     def fit(self):
 
         # Padding in sequences
-        train_x = pad_sequences(self.inp_vector,
-                                maxlen=self.max_seq_len,
-                                padding="post",
-                                truncating="post")
-        train_y = pad_sequences(self.tar_vector,
-                                maxlen=self.max_seq_len,
-                                padding="post",
-                                truncating="post")
+        input_data = pad_sequences(self.inp_tensor,
+                                   maxlen=self.max_length,
+                                   padding="post",
+                                   truncating="post")
+        target_data = pad_sequences(self.tar_tensor,
+                                    maxlen=self.max_length,
+                                    padding="post",
+                                    truncating="post")
+
+        # Add to tensor
+        train_x, test_x, train_y, test_y = train_test_split(input_data, target_data, test_size=self.test_size)
 
         train_ds = tf.data.Dataset.from_tensor_slices((train_x, train_y))
+        val_ds = tf.data.Dataset.from_tensor_slices((test_x, test_y))
+
         train_ds = train_ds.batch(self.batch_size)
         train_ds = train_ds.shuffle(42)
 
@@ -173,7 +182,7 @@ class TrainTransformer:
                                                                                              self.train_accuracy.result()))
             print("-----------------------------------------------------------")
             if self.bleu:
-                for batch, (inp, tar) in enumerate(train_ds.take(1)):
+                for batch, (inp, tar) in enumerate(val_ds):
                     bleu_score = self.evaluation(inp, tar)
                     print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- Bleu_score: {:.4f}'.format(epoch + 1,
                                                                                                       self.train_loss.result(),
@@ -208,6 +217,7 @@ if __name__ == '__main__':
     parser.add_argument("--min-sentence", default=5, type=int)
     parser.add_argument("--max-sentence", default=10, type=int)
     parser.add_argument("--warmup-steps", default=4000, type=int)
+    parser.add_argument("--test-size", default=0.1, type=float)
     parser.add_argument("--retrain", default=False, type=bool)
     parser.add_argument("--bleu", default=False, type=bool)
     parser.add_argument("--debug", default=False, type=bool)
@@ -241,6 +251,7 @@ if __name__ == '__main__':
                      warmup=args.warmup_steps,
                      n_layers=args.n_layers,
                      retrain=args.retrain,
+                     test_size=args.test_size,
                      bleu=args.bleu,
                      debug=args.debug).fit()
     # python train.py --inp-lang="dataset/seq2seq/train.en.txt" --tar-lang="dataset/seq2seq/train.vi.txt" --bleu=True

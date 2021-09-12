@@ -16,14 +16,14 @@ class PositionalEncodingLayer(tf.keras.layers.Layer):
     def __call__(self, position, *args, **kwargs):
         """
         :param position: seq_len
-        :return position_encoding: [batch_size, seq_len, d_model]
+        :return position_encoding: [seq_len, d_model]
         """
-        positions = np.arange(position)[..., np.newaxis]  # [seq_len, 1]
-        indexes = np.arange(self.d_model)[np.newaxis, ...]  # [1, d_model]
+        positions = np.arange(position)[..., np.newaxis]  # [1, seq_len]
+        indexes = np.arange(self.d_model)[np.newaxis, ...]  # [d_model, 1]
         angles = self.get_angles(positions, indexes)  # [seq_len, d_model]
         angles[:, 0::2] = np.sin(angles[:, 0::2])  # apply sin to even indices in the tensor; 2i
         angles[:, 1::2] = np.cos(angles[:, 1::2])  # apply cos to odd indices in the tensor; 2i + 1
-        return tf.cast(angles[np.newaxis, ...], dtype=tf.float32)  # [batch_size, seq_len, d_model]
+        return tf.cast(angles[np.newaxis, ...], dtype=tf.float32)  # [seq_len, d_model]
 
 
 if __name__ == '__main__':
