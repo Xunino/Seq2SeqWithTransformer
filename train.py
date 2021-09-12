@@ -147,12 +147,12 @@ class TrainTransformer:
     def fit(self):
 
         # Padding in sequences
-        input_data = pad_sequences(self.inp_tensor,
-                                   maxlen=self.max_length,
+        input_data = pad_sequences(self.inp_vector,
+                                   maxlen=self.max_seq_len,
                                    padding="post",
                                    truncating="post")
-        target_data = pad_sequences(self.tar_tensor,
-                                    maxlen=self.max_length,
+        target_data = pad_sequences(self.tar_vector,
+                                    maxlen=self.max_seq_len,
                                     padding="post",
                                     truncating="post")
 
