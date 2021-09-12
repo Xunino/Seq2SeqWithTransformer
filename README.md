@@ -59,7 +59,7 @@ python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input
 
 **There are some important arguments for the script you should consider when running it:**
 
-- `dataset`: The folder of dataset
+- `./dataset/seq2seq/`: The folder of dataset
     - `train.en.txt`: input language
     - `train.vi.txt`: target language
 - `--input-path`: input language path (E.g. /dataset/seq2seq/train.en.txt)
