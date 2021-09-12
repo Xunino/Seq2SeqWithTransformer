@@ -84,7 +84,7 @@ python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input
 ## IV. Predict Process
 
 ```bash
-python translation.py --input-path=${path_to_test_data} --target-path=${path_to_input_data}
+python translation.py
 ```
 
 ## V. Result
