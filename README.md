@@ -84,7 +84,7 @@ python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input
 ## IV. Predict Process
 
 ```bash
-python translation.py
+python translation.py --n_layers=2 --header-size=8 --d-model=512 --diff-deep=2048 --max-sentence=50
 ```
 
 ## V. Result
