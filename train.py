@@ -108,10 +108,10 @@ class TrainTransformer:
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-    def evaluation(self, inp, tar):
+    def evaluation(self, val_ds):
         score = 0
-        all_items = len(inp)
-        for i, (encode_input, target) in enumerate(zip(inp, tar)):
+        all_items = len(val_ds)
+        for i, (encode_input, target) in enumerate(val_ds):
             # Target text
             target_sentence = " ".join(self.tar_builder.sequences_to_texts([target.numpy()]))
 
@@ -182,12 +182,11 @@ class TrainTransformer:
                                                                                              self.train_accuracy.result()))
             print("-----------------------------------------------------------")
             if self.bleu:
-                for batch, (inp, tar) in enumerate(val_ds):
-                    bleu_score = self.evaluation(inp, tar)
-                    print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- Bleu_score: {:.4f}'.format(epoch + 1,
-                                                                                                      self.train_loss.result(),
-                                                                                                      self.train_accuracy.result(),
-                                                                                                      bleu_score))
+                bleu_score = self.evaluation(val_ds)
+                print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- Bleu_score: {:.4f}'.format(epoch + 1,
+                                                                                                  self.train_loss.result(),
+                                                                                                  self.train_accuracy.result(),
+                                                                                                  bleu_score))
             else:
                 print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} '.format(epoch + 1,
                                                                              self.train_loss.result(),
@@ -254,4 +253,5 @@ if __name__ == '__main__':
                      test_size=args.test_size,
                      bleu=args.bleu,
                      debug=args.debug).fit()
-    # python train.py --inp-lang="dataset/seq2seq/train.en.txt" --tar-lang="dataset/seq2seq/train.vi.txt" --bleu=True
+
+    # python train.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt" --bleu=True
