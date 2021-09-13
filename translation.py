@@ -2,6 +2,8 @@ import os
 import io
 import json
 import time
+
+import numpy as np
 import tensorflow as tf
 from metrics import CustomSchedule
 from argparse import ArgumentParser
@@ -21,6 +23,9 @@ class Translate:
         self.inp_builder = self.load_tokenizer(name_vocab="input")
         self.tar_builder = self.load_tokenizer(name_vocab="target")
         self.keys = list(self.tar_builder.word_docs.keys())
+
+        self.start = self.tar_builder.word_index["<sos>"]
+        self.end = self.tar_builder.word_index["<eos>"]
 
         # Initialize Seq2Seq model
         input_vocab_size = len(self.inp_builder.word_index) + 1
@@ -66,20 +71,23 @@ class Translate:
                                truncating="post")
         encode_input = tf.convert_to_tensor(tensor, dtype=tf.int64)
 
-        start = [self.tar_builder.word_index["<sos>"]]
-        end = [self.tar_builder.word_index["<eos>"]]
-        decode_input = tf.convert_to_tensor(start, dtype=tf.int64)
+        decode_input = tf.convert_to_tensor([self.start], dtype=tf.int64)
         decode_input = tf.expand_dims(decode_input, 0)
 
+        text = ""
         for _ in range(self.max_seq_len):
             predicted = self.transformer(encode_input, decode_input, False)
             predicted = predicted[:, -1:, :]
             predicted_id = tf.argmax(predicted, axis=-1)
             decode_input = tf.concat([decode_input, predicted_id], axis=-1)
 
-            if predicted_id == end:
+            if predicted_id[0] not in [self.start, self.end]:
+                text += self.tar_builder.index_word[predicted_id[0][0].numpy()] + " "
+
+            if predicted_id == [self.end]:
                 break
-        return " ".join([self.tar_builder.index_word[id_] for id_ in decode_input])
+
+        return text
 
 
 if __name__ == '__main__':
@@ -91,7 +99,7 @@ if __name__ == '__main__':
     parser.add_argument("--n_layers", default=2, type=int)
     parser.add_argument("--header-size", default=8, type=int)
     parser.add_argument("--d-model", default=512, type=int)
-    parser.add_argument("--diff-deep", default=2048, type=int)
+    parser.add_argument("--diff-deep", default=1024, type=int)
     parser.add_argument("--max-sentence", default=50, type=int)
 
     args = parser.parse_args()
@@ -118,8 +126,6 @@ if __name__ == '__main__':
                           n_layers=args.n_layers)
     while True:
         print("\n===========================================")
-        text = str(input("[INFO] Enter text: "))
-        print("-------------------------------------------")
-        print("\n[INFO] Input text : ", text.lower())
+        text = str(input("[INFO] Enter text : "))
         print("[INFO] Translate  : ", translate(text.lower()))
     # python translation.py
