@@ -193,7 +193,6 @@ class TrainTransformer:
                     print(f'[INFO] Saving checkpoint with best bleu score {bleu_score} at {ckpt_save_path}')
                     self.score = bleu_score
 
-                print("===========================================================")
             else:
                 print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} '.format(epoch + 1,
                                                                              self.train_loss.result(),
