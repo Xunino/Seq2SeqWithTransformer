@@ -82,6 +82,89 @@ def accuracy_function(real, pred):
     return tf.reduce_sum(accuracies) / tf.reduce_sum(mask)
 
 
+class ROUGE:
+    """
+        ROUGE: A Package for Automatic Evaluation of Summaries
+        https://aclanthology.org/W04-1013.pdf
+    """
+
+    def __init__(self):
+        pass
+
+    def _create_ngrams(self, token, n=3):
+        token = token.split()
+        len_token = len(token)
+        ngrams = collections.defaultdict(int)
+        for i in range(len_token - n + 1):
+            ngrams[" ".join(token[i:i + n])] += 1
+        return ngrams
+
+    def _recall_safe(self, x, y):
+        return round(max(x / y, 0), 4)
+
+    def _precision_safe(self, x, y):
+        return round(max(x / y, 0), 4)
+
+    def _lcs_len(self, x, y):
+        """
+            This function returns length of longest common sequence of x and y.
+        """
+
+        if len(x) == 0 or len(y) == 0:
+            return 0
+
+        xx = x[:-1]  # xx = sequence x without its last element
+        yy = y[:-1]
+
+        if x[-1] == y[-1]:  # if last elements of x and y are equal
+            return self._lcs_len(xx, yy) + 1
+        else:
+            return max(self._lcs_len(xx, y), self._lcs_len(x, yy))
+
+    def calculate_ngrams(self, predict_sentence, target_sentence, n=3):
+        # Do check matches
+        target_ngrams = self._create_ngrams(target_sentence, n)
+        pred_ngrams = self._create_ngrams(predict_sentence, n)
+
+        matches = 0
+        for ngram in target_ngrams.keys():
+            matches += min(target_ngrams[ngram], pred_ngrams[ngram])
+
+        # Do recall
+        recall = self._recall_safe(matches, len(target_ngrams))
+
+        # Do precision
+        precision = self._precision_safe(matches, len(pred_ngrams))
+
+        # Do f_score
+        if (recall + precision) > 0:
+            f_score = round(2 * recall * precision / (recall + precision), 4)
+        else:
+            f_score = 0.0
+        return recall, precision, f_score
+
+    def calculate_lcs(self, predict_sentence, target_sentence, beta=2):
+
+        predict_sentence = predict_sentence.split()
+        target_sentence = target_sentence.split()
+
+        # Do longest common sentence length
+        lcs_length = self._lcs_len(predict_sentence, target_sentence)
+
+        # Do recall
+        recall = self._recall_safe(lcs_length, len(target_sentence))
+
+        # Do precision
+        precision = self._precision_safe(lcs_length, len(predict_sentence))
+
+        # Do f_score
+        if (recall + precision) > 0:
+            f_score = round((1 + beta ** 2) * recall * precision / (recall + (beta ** 2) * precision), 4)
+        else:
+            f_score = 0.0
+        return recall, precision, f_score
+
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
