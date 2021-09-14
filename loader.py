@@ -131,8 +131,8 @@ class DatasetLoader:
 
         else:
             # Load tokenizer from json
-            tokenize_inp = tokenizer_from_json(self.path_save.format(input_lang))
-            tokenize_tar = tokenizer_from_json(self.path_save.format(target_lang))
+            tokenize_inp = self.load_tokenizer(input_lang)
+            tokenize_tar = self.load_tokenizer(target_lang)
             # Get tensor
             inp_vector = tokenize_inp.texts_to_sequences(raw_origin_language)
             tar_vector = tokenize_tar.texts_to_sequences(raw_target_language)
