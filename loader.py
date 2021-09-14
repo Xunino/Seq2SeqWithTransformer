@@ -75,6 +75,12 @@ class DatasetLoader:
             f.write(json.dumps(tokenizer_json, ensure_ascii=False))
         f.close()
 
+    def load_tokenizer(self, name_vocab):
+        with io.open(self.path_save.format(name_vocab), "r") as f:
+            data = json.load(f)
+            tokenizer = tokenizer_from_json(data)
+        return tokenizer
+
     def load_dataset(self):
         """
         :doing:
@@ -88,7 +94,7 @@ class DatasetLoader:
 
         return raw_origin_language, raw_target_language
 
-    def build_dataset(self):
+    def build_dataset(self, input_lang="input", target_lang="target"):
         """
         :doing:
             1. Khởi tạo liệu
@@ -103,23 +109,33 @@ class DatasetLoader:
         # Xóa dấu câu và số
         # Thêm phần tử nhận diện lúc bắt đầu và kết thúc dịch (VD: <start>, <stop>, ...)
         # Xử lý độ dài câu: min_length <= length <= max_length
-        inp_lang, tar_lang = self.preprocessing_sentence(raw_origin_language, raw_target_language)
+        raw_origin_language, raw_target_language = self.preprocessing_sentence(raw_origin_language, raw_target_language)
 
-        # Build Tokenizer
-        tokenize_inp = Tokenizer(filters='!"#$%&()*+,-./:;=?@[\\]^_`{|}~\t\n')
-        tokenize_tar = Tokenizer(filters='!"#$%&()*+,-./:;=?@[\\]^_`{|}~\t\n')
+        if not os.path.exists((self.path_save.format(input_lang))) and not os.path.exists(
+                (self.path_save.format(target_lang))):
+            # Build Tokenizer
+            tokenize_inp = Tokenizer(filters='!"#$%&()*+,-./:;=?@[\\]^_`{|}~\t\n')
+            tokenize_tar = Tokenizer(filters='!"#$%&()*+,-./:;=?@[\\]^_`{|}~\t\n')
 
-        # Fit text
-        tokenize_inp.fit_on_texts(inp_lang)
-        tokenize_tar.fit_on_texts(tar_lang)
+            # Fit text
+            tokenize_inp.fit_on_texts(raw_origin_language)
+            tokenize_tar.fit_on_texts(raw_target_language)
 
-        # save tokenizer
-        self.save_tokenizer(tokenize_inp, name_vocab="input")
-        self.save_tokenizer(tokenize_tar, name_vocab="target")
+            # save tokenizer
+            self.save_tokenizer(tokenize_inp, name_vocab=input_lang)
+            self.save_tokenizer(tokenize_tar, name_vocab=target_lang)
 
-        # Get tensor
-        inp_vector = tokenize_inp.texts_to_sequences(inp_lang)
-        tar_vector = tokenize_tar.texts_to_sequences(tar_lang)
+            # Get tensor
+            inp_vector = tokenize_inp.texts_to_sequences(raw_origin_language)
+            tar_vector = tokenize_tar.texts_to_sequences(raw_target_language)
+
+        else:
+            # Load tokenizer from json
+            tokenize_inp = tokenizer_from_json(self.path_save.format(input_lang))
+            tokenize_tar = tokenizer_from_json(self.path_save.format(target_lang))
+            # Get tensor
+            inp_vector = tokenize_inp.texts_to_sequences(raw_origin_language)
+            tar_vector = tokenize_tar.texts_to_sequences(raw_target_language)
 
         return inp_vector, tar_vector, tokenize_inp, tokenize_tar
 

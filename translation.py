@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     # FIXME
     # Arguments users used when running command lines
-    parser.add_argument("--n_layers", default=2, type=int)
+    parser.add_argument("--n_layers", default=3, type=int)
     parser.add_argument("--header-size", default=8, type=int)
     parser.add_argument("--d-model", default=512, type=int)
     parser.add_argument("--diff-deep", default=1024, type=int)
@@ -127,5 +127,5 @@ if __name__ == '__main__':
     while True:
         print("\n===========================================")
         text = str(input("[INFO] Enter text : "))
-        print("[INFO] Translate  : ", translate(text.lower()))
+        print("[INFO] Translate  :", translate(text.lower()))
     # python translation.py
