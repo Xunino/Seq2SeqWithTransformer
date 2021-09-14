@@ -91,6 +91,9 @@ class ROUGE:
     def __init__(self):
         pass
 
+    def scores(self, recall, precision, f_score):
+        return {"recall": recall, "precision": precision, "f_score": f_score}
+
     def _create_ngrams(self, token, n=3):
         token = token.split()
         len_token = len(token)
@@ -141,7 +144,7 @@ class ROUGE:
             f_score = round(2 * recall * precision / (recall + precision), 4)
         else:
             f_score = 0.0
-        return recall, precision, f_score
+        return self.scores(recall, precision, f_score)
 
     def calculate_lcs(self, predict_sentence, target_sentence, beta=2):
 
@@ -162,7 +165,7 @@ class ROUGE:
             f_score = round((1 + beta ** 2) * recall * precision / (recall + (beta ** 2) * precision), 4)
         else:
             f_score = 0.0
-        return recall, precision, f_score
+        return self.scores(recall, precision, f_score)
 
 
 if __name__ == '__main__':

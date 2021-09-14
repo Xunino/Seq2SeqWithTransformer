@@ -7,7 +7,7 @@ from loader import DatasetLoader
 from argparse import ArgumentParser
 from models.model import Transformer
 from keras_preprocessing.sequence import pad_sequences
-from metrics import BleuScore, CustomSchedule, MaskedSoftmaxCELoss, accuracy_function
+from metrics import BleuScore, CustomSchedule, MaskedSoftmaxCELoss, accuracy_function, ROUGE
 from sklearn.model_selection import train_test_split
 
 
@@ -26,7 +26,7 @@ class TrainTransformer:
                  n_layers,
                  test_size,
                  retrain,
-                 bleu,
+                 evaluate,
                  debug):
         # Initialize params
         self.inp_lang_path = inp_lang_path
@@ -41,7 +41,7 @@ class TrainTransformer:
         self.d_model = d_model
         self.n_layers = n_layers
         self.retrain = retrain
-        self.bleu = bleu
+        self.evaluate = evaluate
         self.debug = debug
         self.test_size = test_size
 
@@ -93,6 +93,9 @@ class TrainTransformer:
 
         # Initialize Bleu score
         self.bleu_score = BleuScore()
+
+        # Initialize ROUGE
+        self.rouge = ROUGE()
         self.score = 0
 
     def train_step(self, inp, tar):
@@ -182,16 +185,16 @@ class TrainTransformer:
                                                                                              self.train_loss.result(),
                                                                                              self.train_accuracy.result()))
             print("-----------------------------------------------------------")
-            if self.bleu:
-                bleu_score = self.evaluation(val_ds)
+            if self.evaluate:
+                score_tmp = self.evaluation(val_ds)
                 print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- Bleu_score: {:.4f}'.format(epoch + 1,
                                                                                                   self.train_loss.result(),
                                                                                                   self.train_accuracy.result(),
-                                                                                                  bleu_score))
-                if bleu_score >= self.score:
+                                                                                                  score_tmp))
+                if score_tmp >= self.score:
                     ckpt_save_path = self.ckpt_manager.save()
-                    print(f'[INFO] Saving checkpoint with best bleu score {bleu_score} at {ckpt_save_path}')
-                    self.score = bleu_score
+                    print(f'[INFO] Saving checkpoint with best bleu score {score_tmp} at {ckpt_save_path}')
+                    self.score = score_tmp
 
             else:
                 print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} '.format(epoch + 1,
@@ -224,7 +227,7 @@ if __name__ == '__main__':
     parser.add_argument("--warmup-steps", default=4000, type=int)
     parser.add_argument("--test-size", default=0.1, type=float)
     parser.add_argument("--retrain", default=False, type=bool)
-    parser.add_argument("--bleu", default=False, type=bool)
+    parser.add_argument("--evaluate", default=False, type=bool)
     parser.add_argument("--debug", default=False, type=bool)
 
     args = parser.parse_args()
@@ -257,7 +260,7 @@ if __name__ == '__main__':
                      n_layers=args.n_layers,
                      retrain=args.retrain,
                      test_size=args.test_size,
-                     bleu=args.bleu,
+                     evaluate=args.evaluate,
                      debug=args.debug).fit()
 
     # python train.py --input-path="dataset/seq2seq/train.en.txt" --target-path="dataset/seq2seq/train.vi.txt" --bleu=True
