@@ -100,10 +100,10 @@ class ROUGE:
         return ngrams
 
     def _recall_safe(self, x, y):
-        return round(max(x / y, 0), 4)
+        return max(x / y, 0)
 
     def _precision_safe(self, x, y):
-        return round(max(x / y, 0), 4)
+        return max(x / y, 0)
 
     def _lcs_len(self, x, y):
         """
