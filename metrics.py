@@ -141,7 +141,7 @@ class ROUGE:
 
         # Do f_score
         if (recall + precision) > 0:
-            f_score = round(2 * recall * precision / (recall + precision), 4)
+            f_score = 2 * recall * precision / (recall + precision)
         else:
             f_score = 0.0
         return recall, precision, f_score
@@ -164,7 +164,7 @@ class ROUGE:
 
         # Do f_score
         if (recall + precision) > 0:
-            f_score = round((1 + beta ** 2) * recall * precision / (recall + (beta ** 2) * precision), 4)
+            f_score = (1 + beta ** 2) * recall * precision / (recall + (beta ** 2) * precision)
         else:
             f_score = 0.0
         return recall, precision, f_score
