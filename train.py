@@ -148,8 +148,9 @@ class TrainTransformer:
                 print("Predict : ", pred_sentence)
                 print("Target  : ", target_sentence)
                 print("-----------------------------------------------------------")
-            for key, value in score_tmp.items():
-                score_tmp[key] = value / all_items
+
+        for key, value in score_tmp.items():
+            score_tmp[key] = value / all_items
         return score_tmp
 
     def fit(self):
@@ -191,7 +192,7 @@ class TrainTransformer:
             print("-----------------------------------------------------------")
             if self.evaluate:
                 score_tmp = self.evaluation(val_ds)
-                format_text = 'Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- recall: {:.4f} --precision: {:.4f} -- f_score: {:.4f}'
+                format_text = 'Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- recall: {:.4f} -- precision: {:.4f} -- f_score: {:.4f}'
                 print(format_text.format(epoch + 1,
                                          self.train_loss.result(),
                                          self.train_accuracy.result(),
