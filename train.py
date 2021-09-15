@@ -114,7 +114,9 @@ class TrainTransformer:
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
     def evaluation(self, val_ds):
-        score_tmp = collections.defaultdict(int)
+        score_tmp = {"recall": 0,
+                     "precision": 0,
+                     "f_score": 0}
         all_items = len(val_ds)
         for i, (encode_input, target) in enumerate(val_ds):
             # Target text
