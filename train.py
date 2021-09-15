@@ -1,3 +1,4 @@
+import collections
 import os
 import time
 
@@ -113,7 +114,7 @@ class TrainTransformer:
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
     def evaluation(self, val_ds):
-        score = 0
+        score_tmp = collections.defaultdict(int)
         all_items = len(val_ds)
         for i, (encode_input, target) in enumerate(val_ds):
             # Target text
@@ -138,15 +139,18 @@ class TrainTransformer:
                 if predicted_id == end:
                     break
             pred_sentence = " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
-            score += self.rouge.calculate_ngrams(pred_sentence, target_sentence)["f_score"]
+            score_tmp = self.rouge.calculate_ngrams(pred_sentence, target_sentence)
+            for key, value in score_tmp.items():
+                score_tmp[key] += value
 
             if i < 5:
                 print("Input   : ", input_sentence)
                 print("Predict : ", pred_sentence)
                 print("Target  : ", target_sentence)
                 print("-----------------------------------------------------------")
-
-        return score / all_items
+            for key, value in score_tmp.items():
+                score_tmp[key] = value / all_items
+        return score_tmp
 
     def fit(self):
 
@@ -187,10 +191,14 @@ class TrainTransformer:
             print("-----------------------------------------------------------")
             if self.evaluate:
                 score_tmp = self.evaluation(val_ds)
-                print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- f_score: {:.4f}'.format(epoch + 1,
-                                                                                               self.train_loss.result(),
-                                                                                               self.train_accuracy.result(),
-                                                                                               score_tmp))
+                format_text = 'Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- recall: {:.4f} --precision: {:.4f} -- f_score: {:.4f}'
+                print(format_text.format(epoch + 1,
+                                         self.train_loss.result(),
+                                         self.train_accuracy.result(),
+                                         score_tmp["recall"],
+                                         score_tmp["precision"],
+                                         score_tmp["f_score"]))
+
                 if score_tmp >= self.score:
                     ckpt_save_path = self.ckpt_manager.save()
                     print(f'[INFO] Saving checkpoint with best bleu score {score_tmp} at {ckpt_save_path}')
