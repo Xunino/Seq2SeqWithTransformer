@@ -114,9 +114,8 @@ class TrainTransformer:
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
     def evaluation(self, val_ds):
-        score_tmp = {"recall": 0,
-                     "precision": 0,
-                     "f_score": 0}
+        score_tmp = {"ROUGE_L": 0,
+                     "ROUGE_N": 0}
         all_items = len(val_ds)
         for i, (encode_input, target) in enumerate(val_ds):
             # Target text
@@ -141,11 +140,11 @@ class TrainTransformer:
                 if predicted_id == end:
                     break
             pred_sentence = " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
-            recall, precision, f_score = self.rouge.calculate_ngrams(pred_sentence, target_sentence)
+            _, _, rouge_n = self.rouge.calculate_ngrams(pred_sentence, target_sentence)
+            _, _, rouge_l = self.rouge.calculate_lcs(pred_sentence, target_sentence)
 
-            score_tmp["recall"] += recall
-            score_tmp["precision"] += precision
-            score_tmp["f_score"] += f_score
+            score_tmp["ROUGE_N"] += rouge_n
+            score_tmp["ROUGE_L"] += rouge_l
 
             if i < 5:
                 print("Input   : ", input_sentence)
@@ -196,18 +195,17 @@ class TrainTransformer:
             print("-----------------------------------------------------------")
             if self.evaluate:
                 score_tmp = self.evaluation(val_ds)
-                format_text = 'Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- recall: {:.4f} -- precision: {:.4f} -- f_score: {:.4f}'
+                format_text = 'Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- ROUGE_N: {:.4f} -- ROUGE_L: {:.4f}'
                 print(format_text.format(epoch + 1,
                                          self.train_loss.result(),
                                          self.train_accuracy.result(),
-                                         score_tmp["recall"],
-                                         score_tmp["precision"],
-                                         score_tmp["f_score"]))
+                                         score_tmp["ROUGE_N"],
+                                         score_tmp["ROUGE_L"]))
 
-                if score_tmp["f_score"] >= self.score:
+                if score_tmp["ROUGE_L"] >= self.score:
                     ckpt_save = self.ckpt_manager.save()
-                    print(f'[INFO] Saving checkpoint with best f_score score {score_tmp["f_score"]:.4f} at {ckpt_save}')
-                    self.score = score_tmp["f_score"]
+                    print(f'[INFO] Saving checkpoint with best ROUGE_L score {score_tmp["ROUGE_L"]:.4f} at {ckpt_save}')
+                    self.score = score_tmp["ROUGE_L"]
 
             else:
                 print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} '.format(epoch + 1,
