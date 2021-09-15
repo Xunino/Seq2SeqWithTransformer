@@ -54,7 +54,7 @@ conda activate {your_env_name}
 Training script:
 
 ```bash
-python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input_data} --n_layers=2 --header-size=8 --d-model=512 --diff-deep=2048 --min-sentence=0 --max-sentence=50 --bleu=True
+python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input_data} --n_layers=2 --header-size=8 --d-model=512 --diff-deep=2048 --min-sentence=0 --max-sentence=50 --evaluate=True
 ```
 
 **There are some important arguments for the script you should consider when running it:**
@@ -71,7 +71,7 @@ python train.py  --input-path=${path_to_test_data} --target-path=${path_to_input
 - `--diff-deep`: Hidden size in Position-Wise Feed-Forward Network. It was mentioned in Section `3.3`
 - `--min-sentence`: Min length of sentence to filter in dataset
 - `--max-sentence`: Max length of sentence to filter in dataset
-- `--bleu`: bool values. It's using to evaluate NLP model ([More](https://aclanthology.org/P02-1040.pdf))
+- `--evaluate`: bool values. It's using to evaluate NLP model ([Bleu](https://aclanthology.org/P02-1040.pdf) and [ROUGE](https://aclanthology.org/W04-1013.pdf))
 
 **Note**:
 
