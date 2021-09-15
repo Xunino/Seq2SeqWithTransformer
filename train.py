@@ -139,9 +139,11 @@ class TrainTransformer:
                 if predicted_id == end:
                     break
             pred_sentence = " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
-            score = self.rouge.calculate_ngrams(pred_sentence, target_sentence)
-            for key, value in score.items():
-                score_tmp[key] += value
+            recall, precision, f_score = self.rouge.calculate_ngrams(pred_sentence, target_sentence)
+
+            score_tmp["recall"] += recall
+            score_tmp["precision"] += precision
+            score_tmp["f_score"] += f_score
 
             if i < 5:
                 print("Input   : ", input_sentence)
