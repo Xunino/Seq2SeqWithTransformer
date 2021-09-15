@@ -138,7 +138,7 @@ class TrainTransformer:
                 if predicted_id == end:
                     break
             pred_sentence = " ".join(self.tar_builder.sequences_to_texts(np.array(decode_input)))
-            score += self.bleu_score(pred_sentence, target_sentence)
+            score += self.rouge.calculate_ngrams(pred_sentence, target_sentence)["f_score"]
 
             if i < 5:
                 print("Input   : ", input_sentence)
@@ -187,10 +187,10 @@ class TrainTransformer:
             print("-----------------------------------------------------------")
             if self.evaluate:
                 score_tmp = self.evaluation(val_ds)
-                print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- Bleu_score: {:.4f}'.format(epoch + 1,
-                                                                                                  self.train_loss.result(),
-                                                                                                  self.train_accuracy.result(),
-                                                                                                  score_tmp))
+                print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} -- f_score: {:.4f}'.format(epoch + 1,
+                                                                                               self.train_loss.result(),
+                                                                                               self.train_accuracy.result(),
+                                                                                               score_tmp))
                 if score_tmp >= self.score:
                     ckpt_save_path = self.ckpt_manager.save()
                     print(f'[INFO] Saving checkpoint with best bleu score {score_tmp} at {ckpt_save_path}')
