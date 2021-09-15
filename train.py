@@ -199,10 +199,10 @@ class TrainTransformer:
                                          score_tmp["precision"],
                                          score_tmp["f_score"]))
 
-                if score_tmp >= self.score:
+                if score_tmp["f_score"] >= self.score:
                     ckpt_save_path = self.ckpt_manager.save()
-                    print(f'[INFO] Saving checkpoint with best bleu score {score_tmp} at {ckpt_save_path}')
-                    self.score = score_tmp
+                    print(f'[INFO] Saving checkpoint with best f_score score {score_tmp["f_score"]} at {ckpt_save_path}')
+                    self.score = score_tmp["f_score"]
 
             else:
                 print('Epoch {} -- Loss: {:.4f} -- Accuracy: {:.4f} '.format(epoch + 1,
