@@ -200,8 +200,8 @@ class TrainTransformer:
                                          score_tmp["f_score"]))
 
                 if score_tmp["f_score"] >= self.score:
-                    ckpt_save_path = self.ckpt_manager.save()
-                    print(f'[INFO] Saving checkpoint with best f_score score {score_tmp["f_score"]} at {ckpt_save_path}')
+                    ckpt_save = self.ckpt_manager.save()
+                    print(f'[INFO] Saving checkpoint with best f_score score {score_tmp["f_score"]:.4f} at {ckpt_save}')
                     self.score = score_tmp["f_score"]
 
             else:
