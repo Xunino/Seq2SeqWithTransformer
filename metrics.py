@@ -125,6 +125,9 @@ class ROUGE:
             return max(self._lcs_len(xx, y), self._lcs_len(x, yy))
 
     def calculate_ngrams(self, predict_sentence, target_sentence, n=3):
+        if len(predict_sentence.split()) == 0 or len(target_sentence.split()) == 0:
+            return 0
+
         # Do check matches
         target_ngrams = self._create_ngrams(target_sentence, n)
         pred_ngrams = self._create_ngrams(predict_sentence, n)
@@ -147,6 +150,8 @@ class ROUGE:
         return self.scores(recall, precision, f_score)
 
     def calculate_lcs(self, predict_sentence, target_sentence, beta=2):
+        if len(predict_sentence) == 0 or len(target_sentence) == 0:
+            return 0
 
         predict_sentence = predict_sentence.split()
         target_sentence = target_sentence.split()
