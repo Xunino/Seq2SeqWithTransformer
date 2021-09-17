@@ -10,7 +10,7 @@ class FFN(tf.keras.layers.Layer):
     def __init__(self,
                  diff_deep=1024,
                  d_model=512,
-                 activation="relu"):
+                 activation="gelu"):
         super(FFN, self).__init__()
         self.dense_1 = Dense(diff_deep, activation=activation)
         self.dense_2 = Dense(d_model)

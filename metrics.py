@@ -6,7 +6,7 @@ import tensorflow as tf
 class BleuScore:
     """
         We can evaluate a predicted sequence by comparing it with the label sequence.
-        BLEU (Bilingual Evaluation Understudy) "https://aclanthology.org/P02-1040.pdf",
+        BLEU (Bilingual Evaluation Understudy),
         though originally proposed for evaluating machine translation results,
         has been extensively used in measuring the quality of output sequences for different applications.
         In principle, for any n-grams in the predicted sequence, BLEU evaluates whether this n-grams appears
