@@ -134,10 +134,10 @@ class ROUGE:
             matches += min(target_ngrams[ngram], pred_ngrams[ngram])
 
         # Do recall
-        recall = self._recall_safe(matches, len(target_ngrams))
+        recall = self._recall_safe(matches, len(target_ngrams.values()))
 
         # Do precision
-        precision = self._precision_safe(matches, len(pred_ngrams))
+        precision = self._precision_safe(matches, len(pred_ngrams.values()))
 
         # Do f_score
         if (recall + precision) > 0:
